@@ -1,18 +1,23 @@
 (function (root, factory) {
 	if (typeof define === 'function' && define.amd) {
 		// AMD. Register as an anonymous module.
-		define(['b'], factory);
+		define([], factory);
+	} else if (typeof module === 'object' && module.exports) {
+		// Node. Does not work with strict CommonJS, but
+		// only CommonJS-like environments that support module.exports,
+		// like Node.
+		module.exports = factory();
 	} else {
-		// Browser globals
-		root.amdWeb = factory(root.b);
+		// Browser globals (root is window)
+		root.returnExports = factory();
 	}
-}(this, function (b) {
+}(this, function () {
 	'use strict';
 
-	var moduleName = 'buildCalc';
+	var MODULE_NAME = 'buildCalc';
 	var STAGES = ['material', 'square', 'size', 'depth'];
-	var app = window.angular.module(moduleName, []);
 
+	var app = window.angular.module(MODULE_NAME, []);
 	app.factory('safeApply', [function() {
 		return function($scope, fn) {
 			var phase = $scope.$root.$$phase;
@@ -184,5 +189,5 @@
 	// Just return a value to define the module export.
 	// This example returns an object, but the module
 	// can return a function as the exported value.
-	return moduleName;
+	return MODULE_NAME;
 }));
