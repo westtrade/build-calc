@@ -100,7 +100,7 @@
 			<br>
 			<div class="card-deck">
 				<div ng-repeat="material in materials" style="cursor: pointer;" ng-class="{ active: stage[0].value === $index }" class="card" style="width: 20rem;" ng-click="calculator.setStage($event, 'material', $index)">
-					<img width="100%" height="240px" src="data:image/gif;base64,R0lGODlhAQABAIAAAMLCwgAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==">
+					<img width="100%" height="240px" src="image/{{ material.url }}">
 					<div class="card-block">
 						<h4 class="card-title">{{ material.title }}</h4>
 						<!-- <p class="card-text">Какое нибудь описание</p> -->

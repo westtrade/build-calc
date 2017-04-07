@@ -137,10 +137,10 @@
 	var SETTINGS = {
 		stage: [],
 		materials: [
-			{id: 'fanera', title: 'Фанера'},
-			{id: 'dsp', title: 'ДСП'},
-			{id: 'dvp', title: 'ДВП'},
-			{id: 'osp', title: 'ОСП'},
+			{id: 'fanera', title: 'Фанера', url: 'fanera.jpg'},
+			{id: 'dsp', title: 'ДСП', url: 'dsp.jpg'},
+			{id: 'dvp', title: 'ДВП', url: 'dvp.jpg'},
+			{id: 'osp', title: 'ОСП', url: 'osp.jpg'},
 		],
 		sizes: [
 		],
