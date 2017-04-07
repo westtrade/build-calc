@@ -14,6 +14,104 @@
 }(this, function () {
 	'use strict';
 
+
+	var CALC_DATA = {
+		'fanera': {
+			sizes: [
+				'1525х1525',
+				'2400х1500',
+				// '2440x1500',
+				'2500х1250',
+				'2500х1500',
+				'2500х1525',
+				'3000х1500',
+				'3050х1525',
+				'1525х505',
+				'1525х250',
+				'1525х525',
+				'1525х590',
+
+			],
+
+			depths: [
+				'3',
+				'4',
+				'5',
+				'6',
+				'7',
+				'8',
+				'9',
+				'10',
+				'12',
+				'15',
+				'16',
+				'18',
+				'21',
+				'27',
+				'35',
+
+			]
+		},
+		'dvp': {
+			sizes: [
+				'1220х610',
+				'2135х1220',
+				'2440х1220',
+				'2500х1250',
+				'2745х1220',
+				'2745х1700',
+				'3050х1220',
+
+			],
+
+			depths: [
+				'2,5',
+				'3',
+				'3,2',
+				'4',
+				'5',
+				'6',
+			]
+		},
+		'dsp': {
+			sizes: [
+				'2500х1850',
+				'2750х1830',
+				'2800х2070',
+				'3500х1750',
+			],
+			depths: [
+				'8',
+				'10',
+				'16',
+				'18',
+				'22',
+				'25',
+				'30',
+				'35',
+				'38',
+			]
+		},
+		'osp': {
+			sizes: [
+				'2800х1250',
+				'2500х1250',
+				'2440х1220',
+			],
+			depths: [
+				'6',
+				'8',
+				'9',
+				'10',
+				'12',
+				'15',
+				'18',
+				'22',
+				'27',
+			]
+		}
+	};
+
 	var MODULE_NAME = 'buildCalc';
 	var STAGES = ['material', 'square', 'size', 'depth'];
 
@@ -45,15 +143,8 @@
 			{id: 'osp', title: 'ОСП'},
 		],
 		sizes: [
-			[1000, 1000],
-			[2500, 1250],
-			[2500, 1250],
-			[2500, 1250],
-			[2500, 1250],
-			[2500, 1250],
 		],
 		depths: [
-			3, 4, 5, 6, 8
 		],
 	};
 
@@ -64,6 +155,24 @@
 			$scope.materials = SETTINGS.materials;
 			$scope.sizes = SETTINGS.sizes;
 			$scope.depths = SETTINGS.depths;
+
+			var calculator = this;
+
+			function getMaterialParams(materialId) {
+				var material = Object.assign({}, CALC_DATA[materialId]);
+				material.sizes = material.sizes.map(function(size) { return size.split('х'); });
+
+				return material;
+			}
+
+			function setMaterial(materialId) {
+				var currentMaterial = getMaterialParams(materialId);
+
+				safeApply($scope, function(){
+					$scope.sizes = currentMaterial.sizes;
+					$scope.depths = currentMaterial.depths;
+				});
+			}
 
 			function count() {
 				var currentStage = $scope.stage[STAGES.indexOf('square')];
@@ -78,6 +187,10 @@
 				} else {
 					var areaSquare =
 						parseInt(document.forms[0].elements['square-field'].value) * 1000000 ;
+
+					if (areaSquare === 0) {
+						return 0;
+					}
 
 					var peaceSquare = square(size());
 					var count = Math.ceil(areaSquare / peaceSquare);
@@ -113,11 +226,58 @@
 				return (square(size) * depths);
 			}
 
-			this.showResult = function showResult() {
+			function scrollToBottom(needScroll) {
+				if (needScroll) {
+					// document.body.scrollTop = document.body.scrollHeight;
+					$('html, body').animate({
+						scrollTop: document.body.scrollHeight
+					}, 300);
+				}
+			}
+
+			function parametersIsEnough() {
+				return calculator.currentStage() >	 2;
+			}
+
+			setMaterial('fanera');
+
+			this.currentStage = function getCurrentStage() {
 				return $scope.stage.filter(function (item) {
 					return item && item.enable;
-				}).length >= 4;
+				}).length;
 			};
+
+			this.resetStages = function resetStages() {
+				var startStageIdx = 1;
+				var delta = this.currentStage() - startStageIdx;
+
+				while (delta > 0) {
+					var stageIdx = startStageIdx + delta;
+					var previousStageState = $scope.stage[stageIdx] || {enable: true};
+					$scope.stage[stageIdx] = Object.assign({}, previousStageState, {value:  0});
+					delta -= 1;
+				}
+			};
+
+			this.showResult = function showResult() {
+				return this.currentStage() >= 4;
+			};
+
+			var $form = $element.find('form');
+			var form = $form[0];
+
+			function setFullResult() {
+				if (!parametersIsEnough()) {
+					return false;
+				}
+
+				if ($scope.stage[1].value === 0) {
+					form.elements['capacity-field'].value = count();
+				} else {
+					var totalSquare = (square(size())  / 1000000) * count();
+					form.elements['square-field'].value = Math.ceil(totalSquare);
+				}
+			}
 
 			this.setStage = function setStage($event, stageIdx, value) {
 				if (!Number.isInteger(stageIdx)) {
@@ -129,8 +289,18 @@
 
 				var previousStageState = $scope.stage[stageIdx] || {enable: true};
 
+				if (STAGES[stageIdx] === 'material') {
+					setMaterial($scope.materials[value].id);
+					this.resetStages();
+				}
+
 				safeApply($scope, function applyStage() {
+					var needToScroll = $scope.stage.length - 1 <= stageIdx;
 					$scope.stage[stageIdx] = Object.assign({}, previousStageState, { value:  value });
+					setTimeout(function() {
+						scrollToBottom(needToScroll);
+						setFullResult();
+					}, 0)
 				});
 
 				if ($event) {
@@ -151,20 +321,23 @@
 				this.setStage(null, stageIdx, value);
 			};
 
-			var $form = $element.find('form');
-			var form = $form[0];
 
-			form.addEventListener('input', function () {
+
+			$('#square-field, #capacity-field').on('change input', function () {
+
 				safeApply($scope, function makeDigest() {
 					$scope.digest = new Date();
 				});
-			}, true);
+				setFullResult();
 
-			form.addEventListener('change', function () {
-				safeApply($scope, function makeDigest() {
-					$scope.digest = new Date();
-				});
-			}, true);
+
+			}).on('focus', function () {
+				if (this.id === 'square-field') {
+					calculator.setStage(null, 1, 0);
+				} else if (this.id === 'capacity-field') {
+					calculator.setStage(null, 1, 1);
+				}
+			});
 
 			this.calculateCount = function calculateCount() {
 				if (!this.showResult()) {
@@ -174,10 +347,34 @@
 				return count();
 			};
 
+			this.submitResult = function submitResult ($event) {
+				var query = form.action + '?' + $(form).serialize();
+
+				var xhr = new XMLHttpRequest();
+				xhr.open('GET', query, true);
+
+				xhr.onreadystatechange = function() { // (3)
+					if (xhr.readyState != 4) return;
+
+					if (xhr.status != 200) {
+						swal('Заявка принята!', '', 'success');
+					} else {
+						swal('Ошибка!', '', 'error');
+					}
+				};
+
+				xhr.send();
+				$event.preventDefault();
+				return false;
+			};
+
 			this.calculateCapacity = function calculateCapacity() {
-				if (!this.showResult()) {
-					return;
+				if (!parametersIsEnough()) {
+					return false;
 				}
+				// if (!this.showResult()) {
+				// 	return;
+				// }
 
 				return (cube(size(), depth())  / 1000000) * count();
 			};

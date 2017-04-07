@@ -6,12 +6,18 @@
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
 	<title>Document</title>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
-	<script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css">
+	<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.3/angular.min.js" charset="utf-8"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js" charset="utf-8"></script>
+
+
 
 	<style>
+	.description {
+	}
 	.pointer.card {
 		cursor: pointer;
 	}
@@ -53,14 +59,28 @@
 			};
 		}
 
+
+
 	</script>
-	<script type="text/javascript" src="https://cdn.rawgit.com/westtrade/build-calc/ed085cfd/calculator.js"></script>
+	<script type="text/javascript" src="./calculator.js"></script>
 </head>
 <body ng-app="buildCalc">
 
 	<nav class="navbar navbar-toggleable-md navbar-light bg-faded">
 		<div class="container">
-			<a class="navbar-brand" href="#">Калькулятор</a>
+			<div class="row">
+				<div class="col-5">
+				<a class="navbar-brand" href="#">КАЛЬКУЛЯТОР</a>
+				<strong>+7 (4742) 50-51-80</strong>
+				</div>
+				<div class="col-7 col-md-auto">
+				<p class="navbar-text">
+					Купить Фанеру, ОСП, ДСП, МДФ, ДВП по цене завода производителя в Липецке.
+					Мы работаем как с оптовыми поставками,мелкооптовыми так и в розницу-поскольку склад и офис
+					у нас находится территориально в одном месте.
+				</p>
+				</div>
+			</div>
 		</div>
 	</nav>
 
@@ -97,7 +117,7 @@
 			<h2>2. Укажите общую площадь или количество листов</h2>
 			<br>
 
-			<form class="card-deck">
+			<div class="card-deck">
 
 				<div ng-class="{active: stage[1].value === 0}" class="card pointer" ng-click="calculator.setComplexStage($event, 'square', 0)">
 					<div class="card-block">
@@ -106,7 +126,7 @@
 								Площадь
 							</label>
 							<div class="input-group">
-								<input class="form-control" min="0" type="number" step="any" name="square" id="square-field" value="0">
+								<input class="form-control" min="0" type="number" form="get-price" step="any" name="square" id="square-field" value="0">
 								<div class="input-group-addon">
 									<strong>M2</strong>
 								</div>
@@ -124,7 +144,7 @@
 							Количество
 						</label>
 						<div class="input-group">
-							<input class="form-control" type="number"  min="0" name="capacity" id="capacity-field" value="0">
+							<input class="form-control" type="number" form="get-price"  min="0" name="capacity" id="capacity-field" value="0">
 							<div class="input-group-addon">
 								<strong>шт</strong>
 							</div>
@@ -132,7 +152,7 @@
 					</div>
 				</div>
 			</div>
-		</form>
+		</div>
 
 
 		<div ng-show="stage[1].enable">
@@ -165,14 +185,33 @@
 
 		<div class="card" ng-show="calculator.showResult()">
 			<div class="card-block">
-				<h2 class="card-title">Результат расчёта</h2>
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-6">
+						<h2 class="card-title">Результат расчёта</h2>
 
-				<div><strong>Тип материала: </strong> {{ materials[stage[0].value].title }}</div>
-				<div><strong>Размер листа: </strong> {{ sizes[stage[2].value].join(' x ') }} мм х мм</div>
-				<div><strong>Толщина листа: </strong> {{ depths[stage[3].value] }} мм</div>
-				<div><strong>Количество листов</strong> {{ calculator.calculateCount()  }} шт</div>
-				<div><strong>Общий объем</strong> {{  calculator.calculateCapacity() }} м<sup>3</sup></div>
-
+						<div><strong>Тип материала: </strong> {{ materials[stage[0].value].title }}</div>
+						<div><strong>Размер листа: </strong> {{ sizes[stage[2].value].join('x') }} &nbsp; MMxММ</div>
+						<div><strong>Толщина листа: </strong> {{ depths[stage[3].value] }} мм</div>
+						<div><strong>Количество листов</strong> {{ calculator.calculateCount()  }} шт</div>
+						<div><strong>Общий объем</strong> {{  calculator.calculateCapacity() }} м<sup>3</sup></div>
+						</div>
+						<div class="col-6">
+							<form action="/action.php" id="get-price" ng-submit="calculator.submitResult($event)">
+								<input type="hidden" name="material" ng-value="materials[stage[0].value].title">
+								<h3>Получить стоимость</h3><br />
+								<div class="form-group">
+									<div class="input-group-lg input-group">
+										<input class="form-control" placeholder="Телефон" name="phone" required />
+  										<span class="input-group-btn">
+											<button type="submit" class="btn btn-primary">Получить</button>
+										</span>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 
