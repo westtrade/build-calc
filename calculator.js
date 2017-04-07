@@ -376,7 +376,7 @@
 				// 	return;
 				// }
 
-				return (cube(size(), depth())  / 1000000) * count();
+				return Math.round((cube(size(), depth())  / 1000000) * count());
 			};
 		}]);
 
