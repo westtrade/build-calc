@@ -20,7 +20,7 @@
 			sizes: [
 				'1525х1525',
 				'2400х1500',
-				// '2440x1500',
+				'2440х1500',
 				'2500х1250',
 				'2500х1500',
 				'2500х1525',
@@ -30,9 +30,7 @@
 				'1525х250',
 				'1525х525',
 				'1525х590',
-
 			],
-
 			depths: [
 				3,
 				4,
@@ -49,7 +47,6 @@
 				21,
 				27,
 				35,
-
 			]
 		},
 		'dvp': {
@@ -61,9 +58,7 @@
 				'2745х1220',
 				'2745х1700',
 				'3050х1220',
-
 			],
-
 			depths: [
 				2.5,
 				3,
@@ -116,6 +111,7 @@
 	var STAGES = ['material', 'square', 'size', 'depth'];
 
 	var app = window.angular.module(MODULE_NAME, []);
+
 	app.factory('safeApply', [function() {
 		return function($scope, fn) {
 			var phase = $scope.$root.$$phase;
@@ -275,7 +271,7 @@
 					form.elements['capacity-field'].value = count();
 				} else {
 					var totalSquare = (square(size())  / 1000000) * count();
-					form.elements['square-field'].value = Math.ceil(totalSquare);
+					form.elements['square-field'].value = parseFloat(totalSquare.toFixed(3));
 				}
 			}
 
@@ -376,7 +372,7 @@
 				// 	return;
 				// }
 
-				return Math.ceil((cube(size(), depth())  / 1000000) * count());
+				return parseFloat(((cube(size(), depth())  / (1000000 * 1000)) * count()).toFixed(3)).toString().replace('.', ',');
 			};
 		}]);
 

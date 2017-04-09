@@ -10,32 +10,41 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css">
 	<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+	<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script> -->
+	<!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script> -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.3/angular.min.js" charset="utf-8"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js" charset="utf-8"></script>
+	<!-- <script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script> -->
 
 	<style>
-	.description {
-	}
-	.out-link {
-			margin-left: 10px;
-	}
-	.pointer.card {
-		cursor: pointer;
-	}
-	.card {
-		margin-bottom: 20px
-	}
-	.card.active {
-		border-color: #0275d8;
-	}
-	.btn {
-		cursor: pointer;
-	}
-	.card-block__elem {
-		margin-bottom: 10px
-	}
+		.description {
+		}
+		.out-link {
+				margin-left: 10px;
+		}
+		.pointer.card {
+			cursor: pointer;
+		}
+		.card {
+			margin-bottom: 20px
+		}
+		.card.active {
+			border-color: #0275d8;
+		}
+		.btn {
+			cursor: pointer;
+		}
+		.card-block__elem {
+			margin-bottom: 10px
+		}
+
+		dt {
+			float: left;
+		}
+		dd {
+			text-align: right;
+			border-bottom: dashed 1px silver;
+		}
 	</style>
 	<script>
 		if (typeof Object.assign != 'function') {
@@ -108,7 +117,7 @@
 			<br>
 			<div class="card-deck">
 				<div ng-repeat="material in materials" style="cursor: pointer;" ng-class="{ active: stage[0].value === $index }" class="card" ng-click="calculator.setStage($event, 'material', $index)">
-					<img width="100%" height="240px" src="image/{{ material.url }}">
+					<img width="100%" height="240px" ng-attr-src="image/{{ material.url }}">
 					<div class="card-block">
 						<h4 class="card-title">{{ material.title }}</h4>
 						<!-- <p class="card-text">Какое нибудь описание</p> -->
@@ -189,27 +198,43 @@
 		<br>
 
 		<div class="card" ng-show="calculator.showResult()">
+			<strong class="card-header">
+				Результат расчёта
+			</strong>
 			<div class="card-block">
 				<div class="container-fluid">
 					<div class="row">
 						<div class="card-block__elem col-xs-12 col-lg-6">
-							<h2 class="card-title">Результат расчёта</h2>
+							<!-- <h2 class="card-title">Результат расчёта</h2> -->
 
-							<div><strong>Тип материала: </strong> {{ materials[stage[0].value].title }}</div>
-							<div><strong>Размер листа: </strong> {{ sizes[stage[2].value].join('x') }} &nbsp; MMxММ</div>
-							<div><strong>Толщина листа: </strong> {{ depths[stage[3].value] }} мм</div>
-							<div><strong>Количество листов</strong> {{ calculator.calculateCount()  }} шт</div>
-							<div><strong>Общий объем</strong> {{  calculator.calculateCapacity() }} м<sup>3</sup></div>
+							<dl>
+								<dt>Тип материала:</dt>
+								<dd>{{ materials[stage[0].value].title }}</dd>
+								<dt>Размер листа (MMxММ):</dt>
+								<dd>{{ sizes[stage[2].value].join(' x ') }}</dd>
+								<dt>Толщина листа (ММ):</dt>
+								<dd>{{ depths[stage[3].value] }}</dd>
+								<dt>Количество листов (ШТ):</dt>
+								<dd>{{ calculator.calculateCount() }}</dd>
+								<dt>Общий объем (м<sup>3</sup>):</dt>
+								<dd>{{  calculator.calculateCapacity() }}</dd>
+							</dl>
 						</div>
 						<div class="card-block__elem col-xs-12 col-lg-6">
 							<form action="/action.php" id="get-price" ng-submit="calculator.submitResult($event)">
 								<input type="hidden" name="material" ng-value="materials[stage[0].value].title">
-								<h3>Получить стоимость</h3><br />
+								<input type="hidden" name="size" ng-value="sizes[stage[2].value].join(' x ')">
+								<input type="hidden" name="width" ng-value="depths[stage[3].value]">
+								<input type="hidden" name="count" ng-value="calculator.calculateCount()">
+								<input type="hidden" name="capacity" ng-value="calculator.calculateCapacity()">
+								<!-- <h3>Получить стоимость</h3><br /> -->
+								<br>
+								<br>
 								<div class="form-group">
 									<div class="input-group-lg input-group">
-										<input class="form-control" placeholder="Телефон" name="phone" required />
+										<input class="form-control" placeholder="Телефон" name="phone" id="phone-field" required />
   										<span class="input-group-btn">
-											<button type="submit" class="btn btn-primary">Получить</button>
+											<button type="submit" class="btn btn-primary">Получить стоимость</button>
 										</span>
 									</div>
 								</div>
